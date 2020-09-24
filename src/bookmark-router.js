@@ -57,22 +57,35 @@ bookmarkRouter
 
 bookmarkRouter
   .route('/:id')
-  .get((req, res) => {
-    const { id } = req.params;
+  .get((req, res, next) => {
 
-    const bookmarkIndex = bookmarks.findIndex(c => c.id == id);
+    const knexInstance = req.app.get('db')
+    BookmarksService.getById(knexInstance, req.params.id)
+      .then(bookmark => {
+        if(!bookmark) {
+          return res.status(404).json({
+            error: { message: `Bookmark doesn't exist` }
+          })
+        }
+        res.json(bookmark)
+      })
+      .catch(next)
 
-    console.log("This is the index of the bookmark", bookmarkIndex); 
+    // const { id } = req.params;
 
-    if (bookmarkIndex === -1) {
-      logger.error(`Bookmark with id ${id} not found.`);
-      return res
-        .status(404)
-        .send('Not found');
-    }
+    // const bookmarkIndex = bookmarks.findIndex(c => c.id == id);
 
-    //res.send('we found it');
-    res.json(bookmarks[bookmarkIndex]);
+    // console.log("This is the index of the bookmark", bookmarkIndex); 
+
+    // if (bookmarkIndex === -1) {
+    //   logger.error(`Bookmark with id ${id} not found.`);
+    //   return res
+    //     .status(404)
+    //     .send('Not found');
+    // }
+
+    // //res.send('we found it');
+    // res.json(bookmarks[bookmarkIndex]);
 
   })
   .delete((req, res) => {

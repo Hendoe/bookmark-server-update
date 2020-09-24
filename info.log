@@ -44,3 +44,5 @@
 {"message":"Unauthorized request to path: ${req.path}","level":"error"}
 {"message":"Unauthorized request to path: ${req.path}","level":"error"}
 {"message":"Unauthorized request to path: ${req.path}","level":"error"}
+{"message":"Unauthorized request to path: ${req.path}","level":"error"}
+{"message":"Unauthorized request to path: ${req.path}","level":"error"}

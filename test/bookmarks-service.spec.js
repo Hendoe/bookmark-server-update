@@ -41,21 +41,22 @@ describe.only('Bookmarks Endpoints', function () {
             });
         });
     });
-    // describe(`GET /bookmarks/:bookmark_id`, () => {
-    //     context('Given there are bookmarks in the database', () => {
-    //         const testBookmarks = makeBookmarksArray()
-    //         beforeEach('insert bookmarks', () => {
-    //             return db
-    //                 .into('bookmark_table')
-    //                 .insert(testBookmarks)
-    //         })
-    //         it('responds with 200 and the specified bookmark', () => {
-    //             const bookmarkId = 2
-    //             const expectedBookmark = testBookmarks[bookmarkId - 1]
-    //             return supertest(app)
-    //                 .get(`/bookmarks/${bookmarkId}`)
-    //                 .expect(200, expectedBookmark)
-    //         });
-    //     });
-    // });
+    describe(`GET /bookmarks/:bookmark_id`, () => {
+        context('Given there are bookmarks in the database', () => {
+            const testBookmarks = makeBookmarksArray()
+            beforeEach('insert bookmarks', () => {
+                return db
+                    .into('bookmark_table')
+                    .insert(testBookmarks)
+            })
+            it('responds with 200 and the specified bookmark', () => {
+                const bookmarkId = 2
+                const expectedBookmark = testBookmarks[bookmarkId - 1]
+                return supertest(app)
+                    .get(`/bookmarks/${bookmarkId}`)
+                    .set('Authorization', config.API_TOKEN)
+                    .expect(200, expectedBookmark)
+            });
+        });
+    });
 });
