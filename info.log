@@ -21,3 +21,4 @@
 {"message":"Bookmark with id 6cb612fb-c507-4699-819b-e5ae17aedccc not found.","level":"error"}
 {"message":"Bookmark with id 0db678dc-aed7-414b-888b-9d13221392f5 created","level":"info"}
 {"message":"Bookmark with id 53f0e960-c5a3-45f8-9f95-dc9d9f87b460 created","level":"info"}
+{"message":"Unauthorized request to path: ${req.path}","level":"error"}
