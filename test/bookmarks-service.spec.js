@@ -2,7 +2,9 @@ require('dotenv').config();
 const config = require('../src/config');
 const knex = require('knex')
 const app = require('../src/app')
-const { makeBookmarksArray } = require('./bookmarks-fixtures')
+const { makeBookmarksArray } = require('./bookmarks-fixtures');
+const supertest = require('supertest');
+const { expect } = require('chai');
 
 
 describe.only('Bookmarks Endpoints', function () {
@@ -59,4 +61,33 @@ describe.only('Bookmarks Endpoints', function () {
             });
         });
     });
+    describe.only(`POST /bookmarks`, () => {
+        it(`creates an article, responding with 201 and the new bookmark`, function () {
+            const newBookmark = {
+                title: 'Test title',
+                url: 'http://www.test.com',
+                description: 'test content',
+                rating: 5
+            }
+            return supertest(app)
+                .post('/bookmarks')
+                .set('Authorization', config.API_TOKEN)
+                .send(newBookmark)
+                .expect(201)
+                .expect(res => {
+                    expect(res.body.title).to.eql(newBookmark.title)
+                    expect(res.body.url).to.eql(newBookmark.url)
+                    expect(res.body.description).to.eql(newBookmark.description)
+                    expect(res.body.rating).to.eql(newBookmark.rating)
+                    expect(res.body).to.have.property('id')
+                    expect(res.headers.location).to.eql(`/bookmarks/${res.body.id}`)
+                })
+                .then(postRes =>
+                    supertest(app)
+                        .get(`/bookmarks/${postRes.body.id}`)
+                        .set('Authorization', config.API_TOKEN)
+                        .expect(postRes.body)
+                )
+        })
+    })
 });

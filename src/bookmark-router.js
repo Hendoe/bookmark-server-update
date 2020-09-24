@@ -18,42 +18,22 @@ bookmarkRouter
       })
       .catch(next)
   })
-  .post(bodyParser, (req, res) => {
-    const { title, url, content = " ", rating = "" } = req.body;
-
-    if (!title) {
-      logger.error(`Title is required`);
-      return res
-        .status(400)
-        .send('Invalid data');
-    }
-
-    if (!url) {
-      logger.error('url is required');
-      return res
-        .status(400)
-        .send('Invalid data');
-    }
-
-    // get an id
-    const id = uuid();
-
-    const bookmark = {
-      id,
-      title,
-      url,
-      content,
-      rating
-    };
-
-    bookmarks.push(bookmark);
-    logger.info(`Bookmark with id ${id} created`);
-
-    res
-      .status(201)
-      .location(`http://localhost:8000/anything/${id}`)
-      .json(bookmark);
-  });
+  .post(bodyParser, (req, res, next) => {
+    console.log('PostBookmarksEndpoint' ,req.body, req.get('Authorization'))
+    const { title, url, description, rating } = req.body
+    const newBookmark = { title, url, description, rating }
+    BookmarksService.insertBookmark(
+      req.app.get('db'),
+      newBookmark
+    )
+      .then(bookmark => {
+        res
+          .status(201)
+          .location(`/bookmarks/${bookmark.id}`)
+          .json(bookmark)
+      })
+      .catch(next)
+  })
 
 bookmarkRouter
   .route('/:id')
@@ -62,7 +42,7 @@ bookmarkRouter
     const knexInstance = req.app.get('db')
     BookmarksService.getById(knexInstance, req.params.id)
       .then(bookmark => {
-        if(!bookmark) {
+        if (!bookmark) {
           return res.status(404).json({
             error: { message: `Bookmark doesn't exist` }
           })
@@ -70,23 +50,6 @@ bookmarkRouter
         res.json(bookmark)
       })
       .catch(next)
-
-    // const { id } = req.params;
-
-    // const bookmarkIndex = bookmarks.findIndex(c => c.id == id);
-
-    // console.log("This is the index of the bookmark", bookmarkIndex); 
-
-    // if (bookmarkIndex === -1) {
-    //   logger.error(`Bookmark with id ${id} not found.`);
-    //   return res
-    //     .status(404)
-    //     .send('Not found');
-    // }
-
-    // //res.send('we found it');
-    // res.json(bookmarks[bookmarkIndex]);
-
   })
   .delete((req, res) => {
     const { id } = req.params;
