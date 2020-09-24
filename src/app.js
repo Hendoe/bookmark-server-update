@@ -40,7 +40,7 @@ app.use(function validateBearerToken(req, res, next) {
   next();
 });
 
-//app.use('/bookmark',bookmarkRouter);
+//app.use('/bookmarks',bookmarkRouter);
 app.use('/bookmarks',bookmarkRouter);
 
 module.exports = app;
