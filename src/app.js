@@ -9,6 +9,7 @@ const app = express();
 const bookmarks = require('./store');
 const { v4:uuid} = require('uuid');
 const bookmarkRouter = require('./bookmark-router');
+const { contentSecurityPolicy } = require('helmet');
 const morganOption = (NODE_ENV === 'production')
   ? 'tiny'
   : 'common';
@@ -40,7 +41,6 @@ app.use(function validateBearerToken(req, res, next) {
   next();
 });
 
-//app.use('/bookmarks',bookmarkRouter);
-app.use('/bookmarks',bookmarkRouter);
+app.use('/bookmarks', bookmarkRouter);
 
 module.exports = app;
