@@ -8,7 +8,7 @@ const logger = require('./logger');
 const app = express();
 const bookmarks = require('./store');
 const { v4:uuid} = require('uuid');
-const bookmarkRouter = require('./bookmark/bookmark-router');
+const bookmarkRouter = require('./bookmark-router');
 const morganOption = (NODE_ENV === 'production')
   ? 'tiny'
   : 'common';
