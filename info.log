@@ -103,3 +103,6 @@
 {"message":"Bookmark with id 123456 not found.","level":"error"}
 {"message":"Bookmark with id 123456 deleted.","level":"info"}
 {"message":"Bookmark with id 123456 deleted.","level":"info"}
+{"message":"Unauthorized request to path: /","level":"error"}
+{"message":"Unauthorized request to path: /","level":"error"}
+{"message":"Unauthorized request to path: /api/bookmarks/2","level":"error"}
