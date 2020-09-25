@@ -61,8 +61,8 @@ describe.only('Bookmarks Endpoints', function () {
             });
         });
     });
-    describe.only(`POST /bookmarks`, () => {
-        it(`creates an article, responding with 201 and the new bookmark`, function () {
+    describe(`POST /bookmarks`, () => {
+        it(`creates an bookmark, responding with 201 and the new bookmark`, function () {
             const newBookmark = {
                 title: 'Test title',
                 url: 'http://www.test.com',
@@ -88,6 +88,18 @@ describe.only('Bookmarks Endpoints', function () {
                         .set('Authorization', config.API_TOKEN)
                         .expect(postRes.body)
                 )
+        });
+    });
+
+    describe(`DELETE /bookmarks/:bookmark_id`, () => {
+        context(`Given no bookmarks`, () => {
+            it(`responds with 404`, () => {
+                const bookmarkId = 123456
+                return supertest(app)
+                    .delete(`/bookmarks/${bookmarkId}`)
+                    .set('Authorization', config.API_TOKEN)
+                    .expect(404, { error: { message: `Bookmark doesn't exist` } })
+            })
         })
-    })
+    });
 });
