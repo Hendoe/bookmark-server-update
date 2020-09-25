@@ -62,7 +62,7 @@ describe.only('Bookmarks Endpoints', function () {
         });
     });
     describe.only(`POST /bookmarks`, () => {
-        it(`creates an article, responding with 201 and the new bookmark`, function () {
+        it(`creates a bookmark, responding with 201 and the new bookmark`, function () {
             const newBookmark = {
                 title: 'Test title',
                 url: 'http://www.test.com',
@@ -89,5 +89,29 @@ describe.only('Bookmarks Endpoints', function () {
                         .expect(postRes.body)
                 )
         })
+        
+        const requiredFields = ['title', 'url', 'rating', 'description']
+
+        requiredFields.forEach(field => {
+            const newBookmark = {
+                title: 'Test new bookmark',
+                url: 'http://www.bookmark.com',
+                rating: 5,
+                description: 'Lorem empsum carpe diem vice versa carpe noctum semper fi'
+            }
+
+            it(`responds with 400 and an error message when the '${field}' is missing`, () => {
+                delete newBookmark[field]
+
+                return supertest(app)
+                    .post('/bookmarks')
+                    .set('Authorization', config.API_TOKEN)
+                    .send(newBookmark)
+                    .expect(400, {
+                        error: { message: `Missing '${field}' in request body` }
+                    })
+            })
+        })
+
     })
 });

@@ -19,9 +19,16 @@ bookmarkRouter
       .catch(next)
   })
   .post(bodyParser, (req, res, next) => {
-    console.log('PostBookmarksEndpoint' ,req.body, req.get('Authorization'))
     const { title, url, description, rating } = req.body
     const newBookmark = { title, url, description, rating }
+    
+    for (const [key, value] of Object.entries(newBookmark)) {
+      if (value == null) {
+        return res.status(400).json({
+          error: {message: `Missing '${key}' in request body`}
+        })
+      }
+    }
     BookmarksService.insertBookmark(
       req.app.get('db'),
       newBookmark
@@ -51,25 +58,25 @@ bookmarkRouter
       })
       .catch(next)
   })
-  .delete((req, res) => {
-    const { id } = req.params;
+// .delete((req, res) => {
+//   const { id } = req.params;
 
-    const bookmarkIndex = bookmarks.findIndex(c => c.id == id);
+//   const bookmarkIndex = bookmarks.findIndex(c => c.id == id);
 
-    if (bookmarkIndex === -1) {
-      logger.error(`Bookmark with id ${id} not found.`);
-      return res
-        .status(404)
-        .send('Not found');
-    }
+//   if (bookmarkIndex === -1) {
+//     logger.error(`Bookmark with id ${id} not found.`);
+//     return res
+//       .status(404)
+//       .send('Not found');
+//   }
 
-    bookmarks.splice(bookmarkIndex, 1);
+//   bookmarks.splice(bookmarkIndex, 1);
 
-    logger.info(`Bookmark with id ${id} deleted.`);
+//   logger.info(`Bookmark with id ${id} deleted.`);
 
-    res
-      .status(204)
-      .end();
-  });
+//   res
+//     .status(204)
+//     .end();
+// });
 
 module.exports = bookmarkRouter;
