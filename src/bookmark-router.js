@@ -19,8 +19,8 @@ const serializeBookmark = bookmark => ({
 bookmarkRouter
   .route('/')
   .get((req, res, next) => {
-    const knexInstance = req.app.get('db')
-    BookmarksService.getAllBookmarks(knexInstance)
+    //const knexInstance = req.app.get('db')
+    BookmarksService.getAllBookmarks(bookmarks)
       .then(bookmarks => {
         res.json(bookmarks.map(serializeBookmark))
       })
@@ -39,7 +39,7 @@ bookmarkRouter
     const newBookmark = { title, url, description, rating }
     
     BookmarksService.insertBookmark(
-      req.app.get('db'),
+      req.app.get(bookmarks),
       newBookmark
     )
       .then(bookmark => {
@@ -54,8 +54,8 @@ bookmarkRouter
 bookmarkRouter
   .route('/:id')
   .get((req, res, next) => {
-    const knexInstance = req.app.get('db')
-    BookmarksService.getById(knexInstance, req.params.id)
+    //const knexInstance = req.app.get('db')
+    BookmarksService.getById(bookmarks, req.params.id)
       .then(bookmark => {
         if (!bookmark) {
           return res.status(404).json({
