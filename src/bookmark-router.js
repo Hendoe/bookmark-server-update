@@ -8,20 +8,36 @@ const BookmarksService = require('./bookmarks-service');
 
 const bodyParser = express.json();
 
+const serializeBookmark = bookmark => ({
+  id: bookmark.id,
+  title: xss(bookmark.title),
+  url: bookmark.url,
+  description: xss(bookmark.description),
+  rating: Number(bookmark.rating),
+})
+
 bookmarkRouter
   .route('/')
   .get((req, res, next) => {
     const knexInstance = req.app.get('db')
     BookmarksService.getAllBookmarks(knexInstance)
       .then(bookmarks => {
-        res.json(bookmarks)
+        res.json(bookmarks.map(serializeBookmark))
       })
       .catch(next)
   })
   .post(bodyParser, (req, res, next) => {
-    console.log('PostBookmarksEndpoint' ,req.body, req.get('Authorization'))
+    //validate all fields
+    for (const field of ['title', 'url', 'rating']) {
+      if (!req.body[field]) {
+        logger.error(`${field} is required`)
+        return res.status(400).send(`'${field}' is required`)
+      }
+    }
+    
     const { title, url, description, rating } = req.body
     const newBookmark = { title, url, description, rating }
+    
     BookmarksService.insertBookmark(
       req.app.get('db'),
       newBookmark
@@ -29,7 +45,7 @@ bookmarkRouter
       .then(bookmark => {
         res
           .status(201)
-          .location(`/bookmarks/${bookmark.id}`)
+          .location(`/${bookmark.id}`)
           .json(bookmark)
       })
       .catch(next)
@@ -38,7 +54,6 @@ bookmarkRouter
 bookmarkRouter
   .route('/:id')
   .get((req, res, next) => {
-
     const knexInstance = req.app.get('db')
     BookmarksService.getById(knexInstance, req.params.id)
       .then(bookmark => {
